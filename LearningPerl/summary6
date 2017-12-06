@@ -1,0 +1,6 @@
+1:We're starting to write real programs now, and real programs
+2:What we want to do in this chapter is extend these techniques
+3:First though, let's do some groundwork. When we're dealing
+4:We've actually already seen a filehandle: the STDIN of <STDIN>.
+5:As a counterpart to standard input, there's also standard
+6:Every program has these three filehandles available, at least
