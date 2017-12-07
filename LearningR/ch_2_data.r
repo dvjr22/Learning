@@ -150,3 +150,112 @@ W[1:4]
 W[2:6]
 W[-2]
 W[c(1,2,3)]
+
+#matrix()
+#Create a matrix with dimensions
+Dmat = matrix(nrow = 8, ncol = 4)
+Dmat
+#Load data
+Dmat[ , 1] = Wingcrd
+Dmat[ , 2] = c(22.3, 19.7, 20.8, 20.3, 20.8, 21.5, 20.6, 21.5) #Tarsus
+Dmat[ , 3] = Head
+Dmat[ , 4] = Wt
+Dmat
+#Add column names
+colnames(Dmat) = VarNames #colnames(Dmat) = c("Wingcrd", "Tarsus", "Head","Wt")
+Dmat
+#Fill by element
+Dmat[1, 1] = 59.0 #Row 1, Col 1
+Dmat[1, 2] = 22.3 #Row 1, Col 2
+Dmat
+#More efficient way to create matrix
+Dmat2 = as.matrix(cbind(Wingcrd, Tarsus, Head, Wt))
+#Both matrix are the same
+Dmat  
+Dmat2
+#Check if is a matrix
+is.matrix(Dmat)
+is.matrix(Wingcrd)
+#Transpose a matrix
+t(Dmat)
+#Matrix multiplication
+Dmat * Dmat2
+
+#data.frame()
+#Combine data of same lenght
+#Allows for changes to data with affecting original.
+Dfrm = data.frame(WC = Wingcrd, TS = Tarsus, HD = Head, W = Wt)
+Dfrm
+#Combine original with transformed data
+Dfrm = data.frame(WC = Wingcrd, TS = Tarsus, HD = Head, W = Wt, Wsq = sqrt(Wt)) #sqrt of Wt data as new data
+Dfrm
+
+#Prove variables in new objects are seprate from var that created them.
+Wt
+rm(Wt)
+Wt #Gives error
+Dfrm$W #returns data in frame that was deleted
+Wt = Dfrm$W #Bring it back
+
+#list()
+#Can hold a variety of data in varying formats
+x1 = c(1, 2, 3)
+x2 = c("a", "b", "c", "d")
+x3 = 3
+x4 = matrix(nrow = 2, ncol =2)
+x4[ , 1] = c(1, 2)
+x4[ , 2] = c(3, 4)
+Y = list(x1 = x1, x2 = x2, x3 = x3, x4 = x4)
+Y
+#Access elements in list
+Y$x2
+Y$x1
+
+#Apply linear regression to see list output
+M = lm(WC ~ Wt, data = Dfrm)
+#See data
+M
+names(M)
+#Access values
+M$coefficients
+M$residuals
+
+#Store all bird data in a list
+AllData = list(BirdData = BirdData, Id = Id2, Z = Z, VarNames = VarNames)
+AllData
+
+#Entering Data
+#Best to use a col = var, row = sample format
+#Import data
+#Read tab delimited data and store in a dataframe
+#header = TRUE means first row has headings
+Squid = read.table(file = "/home/valdeslab/Learning/LearningR/RBook/squid.txt", header = TRUE)
+#To use a different delimeter
+#Squid = read.table(file = "/home/valdeslab/Learning/LearningR/RBook/squid.txt", header = TRUE, dec = ",")
+Squid
+#Set wd and get data
+setwd("/home/valdeslab/Learning/LearningR") #This resets with every session
+Test = read.table(file = "RBook/squid.txt", header = TRUE)
+rm(Test)
+#scan() will import numerical data into a matrix
+?scan
+Test = scan("RBook/squid.txt", skip = 1)
+Test
+rm(Test)
+
+#Accessing data from other statistical packages
+library(foreign)
+?read.mtp #read data from Minitab files
+
+#Can also import data directly from db
+#This package has to be installed and requires drivers. 
+#See pg 52 in A Beginners Guide to R
+#Packages exist for Oracle and MySQL
+#library(RODBC)
+
+
+
+
+
+
+
