@@ -1,4 +1,14 @@
-#Simple math
+#Chapter 1
+#Topics:
+# Simple math
+# help options
+# setwd()
+# install.packages()
+# library()
+# q(save = "yes")
+# citation()
+
+
 2+2
 2/9
 2*7

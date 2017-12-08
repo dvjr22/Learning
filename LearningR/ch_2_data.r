@@ -1,4 +1,10 @@
-#Getting Data
+#Chapter 2
+#Topics:
+# c(), cbind(), rbind()
+# rep(), seq()
+# vector()
+# matrix(), data.frame(), list()
+
 
 #Set data to variables
 a = 59

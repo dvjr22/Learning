@@ -1,4 +1,5 @@
-#Exercises ch 2
+#Exercises Chapter 2
+
 #ex 1
 #Using the c function, create a variable that contains the length values of the
 #seven animals. Also create a variable that contains the Tb values. Include the
