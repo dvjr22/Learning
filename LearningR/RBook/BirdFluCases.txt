@@ -1,4 +1,4 @@
-Year	Azerbaijan	Bangladesh	Cambodia	China	Djibouti	Egypt	Indonesia 	Iraq	LaoPDR	Myanmar	Nigeria	Pakistan	Thailand	Turkey	VietNam
+Year	Azerbaijan	Bangladesh	Cambodia	China	Djibouti	Egypt	Indonesia	Iraq	LaoPDR	Myanmar	Nigeria	Pakistan	Thailand	Turkey	VietNam
 2003	0	0	0	1	0	0	0	0	0	0	0	0	0	0	3
 2004	0	0	0	0	0	0	0	0	0	0	0	0	17	0	29
 2005	0	0	4	8	0	0	20	0	0	0	0	0	5	0	61
