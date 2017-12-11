@@ -78,7 +78,7 @@ Squid[Squid$Location ==1 & Squid$Year == 4 & Squid$Month == 1, ]
 #<0 rows> (or 0-length row.names)
 
 #Sort in order
-Ord1 = order(Squid$Month)
+Ord1 = order(Squid$Month) #Creates a vector of the order in which the values should be represented
 Ord1
 Squid[Ord1, ] #Organize Squid by month
 Squid[order(Squid$Month), ] #In one line
