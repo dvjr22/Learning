@@ -62,6 +62,8 @@ for (i in 1:27){
   dev.off() #Close file
 }
 
+#Functions
+#pg 109
 
 
 

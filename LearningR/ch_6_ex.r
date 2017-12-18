@@ -32,8 +32,25 @@ for (i in 1:length(Station)) {
   
 }
 
+#ex2
+#The owl data were sampled on two consecutive nights. If you select the data
+#from one nest, the observations will cover both nights. The two nights differed
+#as to the feeding regime (satiated or deprived). To see observations from a single
+#night, select all observations from a particular nest and food treatment. Use the
+#ifelse and paste functions to make a new categorical variable that defines
+#the observations from a single night at a particular nest. Try rerunning the code
+#from Exercise 1 to make a graph of sibling negotiation versus arrival time for
+#observations of the same nest and night.
 
+?ifelse
+Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
+names(Owls)
+str(Owls)
+summary(Owls)
+Nests = unique(Owls$Nest)
+FoodTreatment = unique(Owls$FoodTreatment)
+Owls.ATV = Owls[Owls$Nest == "AutavauxTV" & Owls$FoodTreatment == "Deprived", ]
+Owls.ATV2 = Owls[Owls$Nest == "AutavauxTV" & Owls$FoodTreatment == "Satiated", ]
 
-
-
+plot(x = Owls.ATV$SiblingNegotiation, y = Owls.ATV$ArrivalTime)
 
