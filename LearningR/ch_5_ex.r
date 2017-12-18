@@ -1,4 +1,4 @@
-#Exercises Chapter 4
+#Exercises Chapter 5
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
 #setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
@@ -12,6 +12,9 @@
 
 #Import data
 Terr = read.table(file = "RBook/Amphibian_road_Kills.csv", header = TRUE, sep = ",") #Read using read.table
+names(Terr)
+str(Terr)
+summary(Terr)
 
 #The variable, TOT_N, is the number of dead animals at a sampling site,
 #OLIVE is the number of olive groves at a sampling site, and D Park is the
