@@ -1,9 +1,13 @@
-#Chapter 4
+#Chapter 5
 #Topics:
 # Plotting
 # plot()
+# lines()
+# order()
+# loess(), fitted()
 
-#setwd("/home/diego/Learning/LearningR")
+#setwd("/home/diego/Learning/LearningR") #Laptop 
+#setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
 #rm(list = ls()) #clear environment
 
 #plot()
@@ -29,6 +33,7 @@ plot(x = Veg$BARESOIL, y = Veg$R,
      ylim = c(min(Veg$R, na.rm = TRUE), max(Veg$R, na.rm = TRUE)) #yaxis graph bounds
      )
 
+#Symbol type - pch
 plot(x = Veg$BARESOIL, y = Veg$R,
      xlab = "Exposed Soil", #xaxis label
      ylab = "Species Richness", #yaxis label
@@ -66,7 +71,7 @@ plot(x = Veg$BARESOIL, y = Veg$R,
      pch = Veg$Time2 #Controls the symbol to use in the graph. Default is 1
 )
 
-#color
+#color - col
 plot(x = Veg$BARESOIL, y = Veg$R,
      xlab = "Exposed Soil", #xaxis label
      ylab = "Species Richness", #yaxis label
@@ -100,12 +105,62 @@ plot(x = Veg$BARESOIL, y = Veg$R,
      col = Veg$Col2
 )
 
+#Plotting symbol size - cex
+plot(x = Veg$BARESOIL, y = Veg$R,
+     xlab = "Exposed Soil", #xaxis label
+     ylab = "Species Richness", #yaxis label
+     main = "Scatter plot", # title
+     xlim = c(min(Veg$BARESOIL, na.rm = TRUE), max(Veg$BARESOIL, na.rm = TRUE)), #xaxis graph bounds
+     ylim = c(min(Veg$R, na.rm = TRUE), max(Veg$R, na.rm = TRUE)), #yaxis graph bounds
+     pch = 16, #Controls the symbol to use in the graph. Default is 1
+     cex = 1.5 #Controls size of the symbols
+)
 
+#Can use a vector with cex
+Veg$Cex2 = Veg$Time
+Veg$Cex2[Veg$Time == 2002] = 2
+Veg$Cex2[Veg$Time != 2002] = 1
 
+plot(x = Veg$BARESOIL, y = Veg$R,
+     xlab = "Exposed Soil", #xaxis label
+     ylab = "Species Richness", #yaxis label
+     main = "Scatter plot", # title
+     xlim = c(min(Veg$BARESOIL, na.rm = TRUE), max(Veg$BARESOIL, na.rm = TRUE)), #xaxis graph bounds
+     ylim = c(min(Veg$R, na.rm = TRUE), max(Veg$R, na.rm = TRUE)), #yaxis graph bounds
+     pch = 16, #Controls the symbol to use in the graph. Default is 1
+     cex = Veg$Cex2 #Controls size of the symbols
+)
 
+#Adding a line - lines
+plot(x = Veg$BARESOIL, y = Veg$R,
+     xlab = "Exposed Soil", #xaxis label
+     ylab = "Species Richness", #yaxis label
+     main = "Scatter plot", # title
+     xlim = c(min(Veg$BARESOIL, na.rm = TRUE), max(Veg$BARESOIL, na.rm = TRUE)), #xaxis graph bounds
+     ylim = c(min(Veg$R, na.rm = TRUE), max(Veg$R, na.rm = TRUE)) #yaxis graph bounds
+)
 
+#Apply smoothing method
+#Richness (R) is modeled as a function of BARESOIL
+M.Loess = loess(R ~ BARESOIL, data = Veg) 
+Fit = fitted(M.Loess) #Use loess data for fitted() and set to Fit
+lines(Veg$BARESOIL, Fit) #Place line onto graph
 
+#Determine order of values in BARESOIL and rearrange the values of both vectors in line()
+plot(x = Veg$BARESOIL, y = Veg$R,
+     xlab = "Exposed Soil", #xaxis label
+     ylab = "Species Richness", #yaxis label
+     main = "Scatter plot", # title
+     xlim = c(min(Veg$BARESOIL, na.rm = TRUE), max(Veg$BARESOIL, na.rm = TRUE)), #xaxis graph bounds
+     ylim = c(min(Veg$R, na.rm = TRUE), max(Veg$R, na.rm = TRUE)) #yaxis graph bounds
+)
 
+M.Loess = loess(R ~ BARESOIL, data = Veg) 
+Fit = fitted(M.Loess) #Use loess data for fitted() and set to Fit
+#Determines the order of elements, arranges from low to high
+Ord1 = order(Veg$BARESOIL) 
+#Fit line with new ordered data
+lines(Veg$BARESOIL[Ord1], Fit[Ord1], lwd = 3, lty = 2) #lwd line width, lty line type
 
 
 
