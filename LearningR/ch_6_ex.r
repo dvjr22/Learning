@@ -80,19 +80,84 @@ for (i in 1:length(Nests)) {
 
 }
 
+#ex3
+#In this exercise we provide the steps for the function that was presented in
+#Section 6.4: the calculation of diversity indices. Read the introductory text in
+#Section 6.4 on diversity indices. Import the benthic data and extract columns
+#2–76; these are the species.
 
+Benthic = read.table("RBook/RIKZ.txt", header = TRUE)
+names(Benthic)
+str(Benthic)
+Species = Benthic[, 2:76] #Extract species data
 
+#Calculate total abundance at site 1. Calculate total abundance at site 2.
+#Calculate total abundance at site 3. Calculate the total abundance at site 45.
+#Find a function that can do this in one step (sum per row). Brute force may work
+#as well (loop), but is less elegant.
 
+TA = rowSums(Species, na.rm = TRUE)
 
+#Calculate the total number of different species in site 1 (species richness).
+#Calculate species richness for site 2. Do the same for sites 3 and 45. Find a
+#function that can do this in one step.
 
+Richness = rowSums(Species > 0, na.rm = TRUE)
 
+#If you are brave, add the Shannon index. Apply the same function to the
+#vegetation data.
 
+#vegan must be installed
+library(vegan)
+T = diversity(Species, base = 10)
 
+#Create a function using the code for all the diversity indices. Make sure that
+#the user can choose which index is calculated. Ensure that the code can deal with
+#missing values.
 
+#Improved function from 6.4.7
+index.function = function(Data, Choice1 = "R") {
+  
+  Choice1 = toupper(Choice1) #Ensure upper case
+  index = NA #Value of index in the event of incorrect input
+  switch (Choice1, #Case to check
+          "R" = (index = rowSums(Data > 0, na.rm = TRUE)), #Richness
+          "TA" = (index = rowSums(Data, na.rm = TRUE)), #Total Abundance
+          "S" = (index = diversity(Data, base = 10)), #Shannon Index
+          print("Incorrect value added") #Default statement
+  )
+  
+  list(Index = index, Choice = Choice1)
+}
 
+index.function(Species, "R")
+index.function(Species, "TA")
+index.function(Species, "S")
+index.function(Species, "3")
 
+#Testing with different method of getting Shannon Index
+#Improved function from 6.4.7
+index.function2 = function(Data, Choice1 = "R") {
+  
+  Choice1 = toupper(Choice1) #Ensure upper case
+  index = NA
+  switch (Choice1, #Case to check
+          "R" = (index = rowSums(Data > 0, na.rm = TRUE)),
+          "TA" = (index = rowSums(Species, na.rm = TRUE)),
+          # Shannon Index w/o vegan
+          "S" = {
+            RS = rowSums(Species, na.rm = TRUE)
+            prop = Species / RS #Divide Species[i, j] / RS[i]
+            index = -rowSums(prop * log10(prop), na.rm = TRUE) 
+            },
+          print("Incorrect value added") #Default statement
+  )
+  
+  list(Index = index, Choice = Choice1)
+}
 
-
-
-
+index.function2(Species, "R")
+index.function2(Species, "TA")
+index.function2(Species, "S")
+index.function2(Species, "3")
 
