@@ -63,11 +63,22 @@ for (i in 1:27){
 }
 
 #Functions
-#pg 109
+setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
 
+Veg = read.table(file = "RBook/Vegetation2.txt", header = TRUE)
+names(Veg)
+str(Veg)
 
+#Calculate missing variables using a function
+#Will throw error on vector
+NAPerVariable = function(X1) {
+  D1 = is.na(X1) #Create an equivalent data structure with boolean values
+  colSums(D1) #Sum up the columns
+  #Final line of function is what is returned
+}
 
-
+NAPerVariable(Veg[ , 5:24])
+NAPerVariable(Veg)
 
 
 

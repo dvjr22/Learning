@@ -18,7 +18,7 @@ names(Temp.dataframe)
 str(Temp.dataframe)
 Station = unique(Temp.dataframe$Station) #Vector of all stations
 
-setwd("/home/valdeslab/Learning/LearningR/Plots/Chapter_6/ChapterEx") #GreenMachine
+setwd("/home/valdeslab/Learning/LearningR/Plots/Chapter_6/Ex_1") #GreenMachine
 
 for (i in 1:length(Station)) {
 
@@ -47,10 +47,52 @@ Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
 names(Owls)
 str(Owls)
 summary(Owls)
-Nests = unique(Owls$Nest)
-FoodTreatment = unique(Owls$FoodTreatment)
-Owls.ATV = Owls[Owls$Nest == "AutavauxTV" & Owls$FoodTreatment == "Deprived", ]
-Owls.ATV2 = Owls[Owls$Nest == "AutavauxTV" & Owls$FoodTreatment == "Satiated", ]
 
-plot(x = Owls.ATV$SiblingNegotiation, y = Owls.ATV$ArrivalTime)
+Nests = unique(Owls$Nest) #Each nest 
+FoodTreatment = unique(Owls$FoodTreatment) # Either Deprived, Satiated - tells which night
+
+#Can use ifelse to create a column of that has each nest night
+#Then you can pull extract that info to plot
+#ifelse(Owls$FoodTreatment == "Satiaded", Owls$NestNight <- paste(Owls$Nest, "1",sep = "_"), Owls$NestNight <- paste(Owls$Nest, "2",sep = "_"))
+
+setwd("/home/valdeslab/Learning/LearningR/Plots/Chapter_6/Ex_2") #GreenMachine
+
+for (i in 1:length(Nests)) {
+  
+  NestData = Owls[Owls$Nest == Nests[i], ] #All nest data
+  
+  for (j in 1:length(FoodTreatment)) {
+
+    NightData = NestData[NestData$FoodTreatment == FoodTreatment[j], ] #Data for the nest and night
+    GraphName = ifelse(FoodTreatment[j] == "Satiated", 
+        paste(Nests[i], "_Night_1", sep = ""), 
+        paste(Nests[i], "_Night_2", sep = "")) # Name of the graph
+    FileName = paste(GraphName, ".jpg", sep = "") #Nest night filename
+    jpeg(file = FileName) #Open file for saving
+    plot(x = NightData$SiblingNegotiation, #x = NightData$NegPerChick, Will produce same graph
+         y = NightData$ArrivalTime,
+         main = GraphName,
+         xlab = "Sibling Negotiation",
+         ylab = "Arrival Time"
+         )
+    dev.off() #Close file
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
