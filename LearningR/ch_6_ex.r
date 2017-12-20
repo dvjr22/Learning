@@ -1,4 +1,4 @@
-#Exercises Chapter 5
+#Exercises Chapter 6
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
 #setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
