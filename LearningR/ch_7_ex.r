@@ -148,6 +148,95 @@ dotchart(Parasite$Depth,
          xlab = "Depth", ylab = "Prevalence"
 )
 
+#ex7
+#Apply a logarithmic transformation (use 10 as the base) on the nestling
+#negotiation data. Add the value of 1 to avoid problems with the log of 0. Plot
+#the transformed nestling negotiation data versus arrival time. Note that arrival
+#time is coded as 23.00, 24.00, 25.00, 26.00, and so on. Instead of using the labels
+#25, 26, etc. for arrival time, use 01.00, 02.00, and so on.
+
+Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
+names(Owls)
+str(Owls)
+
+Owls$LogNestling =  log10(1 + Owls$SiblingNegotiation) #Add 1 to get rid of 0s then get log10
+
+plot(Owls$LogNestling, Owls$ArrivalTime, 
+     xlab = "Nestling", ylab = "Arrival Time", 
+     axes = FALSE)
+axis(2, at = c(22, 24, 26, 28, 30), labels = c(1.0,2.0,3.0,4.0, 5.0))
+axis(1, at = c(0, 0.5, 1.0, 1.5))
+
+#Make the same graph, but use back-transformed values as labels along the
+#vertical axis. This means using the log-transformed nestling negotiation data
+#but with the label 1 if the log-transformed value is 0, 10 if the log-transformed
+#value is 1, and so on.
+
+max(Owls$LogNestling)
+
+plot(Owls$ArrivalTime, Owls$LogNestling,  
+     ylab = "Nestling", xlab = "Arrival Time", 
+     axes = FALSE)
+axis(2, at = c(0, 1.0, 2.0), labels = c(1, 10, 20))
+axis(1, at = c(22, 24, 26, 28, 30), labels = c(1.0,2.0,3.0,4.0, 5.0))
+
+#ex8
+#Add a smoother (see Chapter 5) to the graph created in Exercise 7 to visualise
+#the pattern for the male data and for the female data. Extract the data from the
+#males, fit a smoother, and superimpose this line onto the graph. Do the same for
+#the female data. Use a legend to identify the different curves. Do the same for
+#food treatment and night.
+
+Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
+names(Owls)
+str(Owls)
+
+Owls$LogNestling =  log10(1 + Owls$SiblingNegotiation) #Add 1 to get rid of 0s then get log10
+plot(Owls$LogNestling, Owls$ArrivalTime, 
+     xlab = "Nestling", ylab = "Arrival Time")
+
+#New stuff
+OwlsM = Owls[Owls$SexParent == "Male", ] #Extract male data
+OwlsF = Owls[Owls$SexParent == "Female", ] #Extract female data
+
+OwlsM$NumSex = OwlsM[OwlsM$SexParent == "Males", ] = 1
+OwlsF$NumSex = OwlsF[OwlsF$SexParent == "Females", ] = 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Veg = read.table(file = "RBook/Vegetation2.txt", header = TRUE)
+names(Veg)
+str(Veg)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

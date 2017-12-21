@@ -6,6 +6,9 @@
 # Strip Chart, stripchart()
 # Boxplot, boxplot()
 # Cleveland Dotplots, dotchart()
+# Plot, plot()
+# Various graphic options:
+#   legend(), lines(), points(), text(), ...
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
 setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
@@ -159,16 +162,84 @@ dotchart(Benthic$Richness,
 
 legend("bottomright", c("values", "mean"), pch = c(1,19), bg = "white") #Add a legend
 
+#Plot - more options
+methods(plot) #Shows all the options of a function
+#plot() produces different charts depending on the data submitted
 
-#7.5
+Benthic = read.table("RBook/RIKZ2.txt", header = TRUE)
+Benthic$fBeach = factor(Benthic$Beach) #Create a factor column
 
+#Both produce same plot
+boxplot(Richness ~ Beach, data = Benthic, xlab = "Beach", ylab = "Richness")
+plot(Benthic$Richness ~ Benthic$fBeach, xlab = "Beach", ylab = "Richness") #produces boxplot based on data submitted
 
+plot(x = Benthic$NAP, y = Benthic$Richness,
+     xlab = "Mean high tide (m)", ylab = "Species Richness",
+     main = "Benthic data")
+M0 = lm(Richness ~ NAP, data = Benthic) #Linear Regression model, Richness as a function of NAP
+abline(M0) #Add the line to the graph
 
+plot(x = Benthic$NAP, y = Benthic$Richness,
+     xlab = "Mean high tide (m)", ylab = "Species Richness",
+     main = "Benthic data",
+     xlim = c(-3,3), ylim = c(min(Benthic$Richness), max((Benthic$Richness))))
 
+plot(x = Benthic$NAP, y = Benthic$Richness,
+     xlab = "Mean high tide (m)", ylab = "Species Richness",
+     main = "Benthic data",
+     type = "n", axes = FALSE) #type - don't plot points, and no axes
+points(y = Benthic$Richness, x = Benthic$NAP) #Add these points to the graph
 
+plot(x = Benthic$NAP, y = Benthic$Richness,
+     xlab = "Mean high tide (m)", ylab = "Species Richness",
+     main = "Benthic data",
+     xlim = c(-1.75, 2), ylim = c(0, 20),
+     type = "n", axes = FALSE) #type - don't plot points, and no axes
+points(y = Benthic$Richness, x = Benthic$NAP) #Add these points to the graph
+axis(2, at = c(0,10,20), tcl = 1) #add axis on right with values, tcl - adds tick marks
+axis(1, at = c(-1.75, 0, 2), labels = c("Sea", "Water line", "Dunes")) #Add axis on bottom with labels
 
+#Adding points, text, and lines
+#Many of these options have been used throughout the chapters and are just reviewed.
 
+Birds = read.table("RBook/loyn.txt", header = TRUE)
+names(Birds)
+str(Birds)
 
+Birds$LOGAREA = log10(Birds$AREA) #Create col of log10 values
+Birds$fGRAZE = factor(Birds$GRAZE)
 
+plot(Birds$LOGAREA, Birds$ABUND,
+     xlab = "Log transformed Area", ylab = "Bird abundance")
+
+M0 = lm(Birds$ABUND ~ Birds$LOGAREA + Birds$fGRAZE) #Apply Linear Regression model
+summary(M0)
+
+LAR = seq(-1, 3, 1) #range of observed data
+
+#Determine abundance values
+ABUND1 = 15.7 + 7.2 * LAR
+ABUND2 = 16.1 + 7.2 * LAR
+ABUND3 = 15.5 + 7.2 * LAR
+ABUND4 = 14.1 + 7.2 * LAR
+ABUND5 = 3.8 + 7.2 * LAR
+
+lines(LAR, ABUND1, lty = 1, lwd = 1, col = 1) #plot line, line type, line width, color
+lines(LAR, ABUND2, lty = 2, lwd = 2, col = 2)
+lines(LAR, ABUND3, lty = 3, lwd = 3, col = 3)
+lines(LAR, ABUND4, lty = 4, lwd = 4, col = 4)
+lines(LAR, ABUND5, lty = 5, lwd = 5, col = 5)
+
+#Add legend
+legend.txt = c("Graze 1", "Graze 2", "Graze 3", "Graze 4", "Graze 5")
+types = seq(1,5,1) #vector to hold values for color, and line characteristics
+legend("topleft", legend = legend.txt,
+       col = types,
+       lty = types,
+       lwd = types,
+       bty = "o", #Adds a box around legend
+       cex = 0.8) #Size of the box
+
+#7.5.6
 
 
