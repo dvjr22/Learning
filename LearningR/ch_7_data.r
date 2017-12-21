@@ -2,8 +2,9 @@
 #Topics:
 # Pie Chart, pie()
 # par()
-# Bar Chart
-# Strip Chart
+# Bar Chart, barplot()
+# Strip Chart, stripchart()
+# Boxplot, boxplot()
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
 #setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
@@ -84,17 +85,42 @@ points(1:9, Bent.M, pch = 16, cex = 1.5) #Add means of each beach
 arrows(1:9, Bent.M, 1:9, Bent.M + Bent.se, lwd = 1.5, angle = 90, length = 0.1) #Add the sd
 arrows(1:9, Bent.M, 1:9, Bent.M - Bent.se, lwd = 1.5, angle = 90, length = 0.1)
 
+#Boxplot
+Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
+names(Owls)
+str(Owls)
 
-#7.3
+boxplot(Owls$NegPerChick)
+par(mfrow = c(2,2))
+boxplot(NegPerChick ~ SexParent, data = Owls)
+boxplot(Owls$NegPerChick ~ Owls$FoodTreatment)
+boxplot(Owls$NegPerChick ~ Owls$SexParent * Owls$FoodTreatment)
+boxplot(Owls$NegPerChick ~ Owls$SexParent * Owls$FoodTreatment,
+        names = c("F/Dep", "M/Dep", "F/Sat", "M/Sat"))
+dev.off()
 
+boxplot(NegPerChick ~ Nest, data = Owls)
+boxplot(NegPerChick ~ Nest, data = Owls,
+        axes = FALSE, ylim = c(-3,8.5)) #draw without axes and lower limit
+axis(2, at = c(0,2,4,6,8)) #Create the axes on left(2)
+text(x = 1.27, y = -2, labels = levels(Owls$Nest), cex = 0.75, srt = 65) #cex - font size, srt - angle
 
+Benthic.n = tapply(Benthic$Richness, Benthic$Beach, length) #Observations per beach
+Benthic.n
+boxplot(Richness ~ Beach, data = Benthic, col = "grey", 
+        xlab = "Beach", ylab = "Richness")
+#Create the info of the graph which can be used to position graphics on the plot
+BP.info = boxplot(Richness ~ Beach, 
+                  data = Benthic, col = "grey", 
+                  xlab = "Beach", ylab = "Richness") 
+BP.info$stats
+#Obtain midpoints of boxes
+BP.midp <- BP.info$stats[2, ] +
+  (BP.info$stats[4, ] - BP.info$stats[2,]) / 2
 
+text(1:9, BP.midp, Benthic.n, col = "white", font = 2) #Add text of sample size
 
-
-
-
-
-
+#7.4 
 
 
 
