@@ -5,9 +5,10 @@
 # Bar Chart, barplot()
 # Strip Chart, stripchart()
 # Boxplot, boxplot()
+# Cleveland Dotplots, dotchart()
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
-#setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
+setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
 rm(list = ls()) #clear environment
 
 #Pie Chart
@@ -120,7 +121,52 @@ BP.midp <- BP.info$stats[2, ] +
 
 text(1:9, BP.midp, Benthic.n, col = "white", font = 2) #Add text of sample size
 
-#7.4 
+#Cleveland Dotplots
+Deer = read.table("RBook/Deer.txt", header = TRUE)
+names(Deer)
+str(Deer)
+
+dotchart(Deer$LCT, xlab = "Length (cm)", ylab = "Observation number")
+dotchart(Deer$LCT, groups = factor(Deer$Sex)) #Creates error due to missing values
+
+Isna = is.na(Deer$Sex) #create to remove na sex values
+dotchart(Deer$LCT[!Isna], 
+         groups = factor(Deer$Sex[!Isna]), #group by sex
+         xlab = "Length (cm)", ylab = "Observation number"
+         )
+
+
+#For my own curiosity -  getting the mean length
+NewDeer = Deer[, c(4,6)] #Filter the columns
+NewDeer2 = NewDeer[complete.cases(NewDeer), ] #Remove rows that have na values
+tapply(NewDeer2$LCT, NewDeer2$Sex, mean) #Get that mean
+
+#Adding mean
+Benthic = read.table("RBook/RIKZ2.txt", header = TRUE)
+Benthic$fBeach = factor(Benthic$Beach) #Create a factor column
+par(mfrow = c(2,2))
+
+dotchart(Benthic$Richness, 
+         groups = Benthic$fBeach,
+         xlab = "Richness", ylab = "Beach")
+
+Bent.M = tapply(Benthic$Richness, Benthic$Beach, mean) #Get mean for each beach
+
+dotchart(Benthic$Richness, 
+         groups = Benthic$fBeach,
+         gdata = Bent.M, gpch = 19, #Add mean data with different symbols
+         xlab = "Richness", ylab = "Beach")
+
+legend("bottomright", c("values", "mean"), pch = c(1,19), bg = "white") #Add a legend
+
+
+#7.5
+
+
+
+
+
+
 
 
 

@@ -103,6 +103,54 @@ boxplot(Intensity ~ Sex * Stage, data = Parasite)
 
 boxplot(Intensity ~ Stage * Year, data = Parasite)
 
+#ex5
+#In Section 7.3, we used the owl data. Make two Cleveland dotplots of nestling
+#negotiation and arrival time. 
+
+Owls = read.table(file = "RBook/Owls.txt", header = TRUE)
+names(Owls)
+str(Owls)
+
+dotchart(Owls$NegPerChick, main = "Negotiations", xlab = "Negotiation", ylab = "Observations")
+dotchart(Owls$ArrivalTime, main = "Arrival Times", xlab = "Arrival Time", ylab = "Observations")
+
+#Make a Cleveland dotplot showing arrival time
+#per night. The nest and food treatment variables show which observations were
+#made on the same night. See also Exercise 2 in Section 6.6.
+
+Owls$Night = ifelse(Owls$FoodTreatment == "Deprived", 1,  2) #Create column with night variable
+
+dotchart(Owls$ArrivalTime,
+         groups = factor(Owls$Night), #Could use FoodTreatment here instead
+         main = "Arrival Time Per Night",
+         xlab = "Arrival", ylab = "Observations")
+
+#ex6
+#Make a Cleveland dotplot for the parasite data that were used in Exercise 4.
+#Use the number of parasites (Intensity), and group the observations by area,
+#sex, stage, or by year. 
+
+Parasite = read.table(file = "RBook/CodParasite.txt", header = TRUE)
+names(Parasite)
+str(Parasite)
+
+dotchart(Parasite$Intensity,
+         groups = factor(Parasite$Area),
+         main = "Parasites",
+         xlab = "Intensity", ylab = "Area"
+         )
+
+#Make a Cleveland dotplot showing depth, and group the observations by prevalence.
+
+dotchart(Parasite$Depth,
+         groups = factor(Parasite$Prevalence),
+         main = "Parasites",
+         xlab = "Depth", ylab = "Prevalence"
+)
+
+
+
+
 
 
 
