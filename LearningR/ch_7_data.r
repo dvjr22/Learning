@@ -9,6 +9,12 @@
 # Plot, plot()
 # Various graphic options:
 #   legend(), lines(), points(), text(), ...
+# identify()
+# Fonts - types and size, title()
+# Special characters, expression()
+# Pairplot, pairs()
+# Coplot , coplot()
+# Combining plots
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
 setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
@@ -240,6 +246,103 @@ legend("topleft", legend = legend.txt,
        bty = "o", #Adds a box around legend
        cex = 0.8) #Size of the box
 
-#7.5.6
+#Identifying Points
+plot(y = Benthic$Richness, x = Benthic$NAP,
+     xlab = "Mean high tide (m)", ylab = "Species richness",
+     main = "Benthic Data")
+identify(y = Benthic$Richness, x = Benthic$NAP) #Can be used to give a character label
+
+#Fonts and font size
+title("Bird abundance", cex.main = 2,
+      family = "serif", font.main = 1) #Add a title to current plot with attributes 
+
+#Special characters
+demo(plotmath)
+
+Whales = read.table("RBook/TeethNitrogen.txt", header = TRUE)
+names(Whales)
+str(Whales)
+
+#Pull out Moby data
+N.Moby = Whales$X15N[Whales$Tooth == "Moby"] 
+Age.Moby = Whales$Age[Whales$Tooth == "Moby"]
+#Plot with expression()
+plot(x = Age.Moby, y = N.Moby, xlab = "Age",
+     ylab = expression(paste(delta^{15}, "N")))
+
+#Pairplot
+Benthic = read.table("RBook/RIKZ2.txt", header = TRUE)
+pairs(Benthic[ , 2:9]) #Creates a multipanel scatterplot
 
 
+pairs(Benthic[, 2:9], diag.panel = panel.hist,
+      upper.panel = panel.smooth,
+      lower.panel = panel.cor)
+
+#Coplot
+Benthic = read.table("RBook/RIKZ2.txt", header = TRUE)
+#coplot(y ~ x) y vs x
+coplot(Richness ~ NAP | as.factor(Beach), pch = 19, data = Benthic) #Plot produced on conditional var Beach
+coplot(Richness ~ NAP | grainsize, pch = 19, data = Benthic) 
+
+#function to apply lm and plot
+panel.lm = function(x, y, ...) {
+  tmp <- lm(y ~ x, na.action = na.omit)
+  abline(tmp)
+  points(x, y, ...)
+  }
+#Can use a function to help create plots
+coplot(Richness ~ NAP | as.factor(Beach), pch = 19, panel = panel.lm, data = Benthic) 
+
+#Using more than one variable
+pHEire = read.table("RBook/SDI2003.txt", header = TRUE)
+names(pHEire)
+str(pHEire)
+
+pHEire$LOGAlt = log10(pHEire$Altitude)
+pHEire$fForested = factor(pHEire$Forested)
+
+coplot(pH ~ SDI | LOGAlt * fForested,
+       panel = panel.lm, data = pHEire)
+
+#Just for some comparisons
+coplot(pH ~ SDI | LOGAlt * fForested,
+       panel = panel.lm, data = pHEire, number = 2) #Limits the number of conditioning intervals
+
+coplot(pH ~ SDI | LOGAlt,
+       panel = panel.lm, data = pHEire)
+
+#Adding color
+pHEire$Temp2.num = as.numeric(cut(pHEire$Temperature, breaks = 2)) #seperate data into two regimes and turn to number
+
+coplot(pH ~ SDI | LOGAlt * fForested,
+       panel = panel.lm, data = pHEire,
+       number = 3, cex = 1.5, pch = 19,
+       col = grey(pHEire$Temp2.num / 3)) #col = pHEire$Temp2.num #Produce red and black dots
+
+#Combining plots
+MyLayOut = matrix(c(2, 0, 1, 3), nrow = 2, ncol=2, byrow = TRUE) #Create matrix as template for plot locations
+MyLayOut
+nf = layout(mat = MyLayOut, widths = c(3, 1), heights = c(1, 3), respect = TRUE) #specify col widths and row heights
+layout.show(nf) #Show the created layout
+
+#Trial and error to create graphs that will fit.
+
+xrange = c(min(Benthic$NAP), max(Benthic$NAP))
+yrange = c(min(Benthic$Richness), max(Benthic$Richness))
+
+#First graph
+par(mar = c(4,4,2,2))
+plot(Benthic$NAP, Benthic$Richness, 
+     xlim = xrange, ylim = yrange, 
+     xlab = "NAP", ylab = "Richness")
+
+#Second graph
+par(mar = c(0,3,1,1))
+boxplot(Benthic$NAP, horizontal = TRUE, axes = FALSE,
+        frame.plot = FALSE, ylim = xrange, space = 0)
+
+#Third graph
+par(mar = c(3,0,1,1))
+boxplot(Benthic$Richness, axes = FALSE,
+        ylim = yrange, space = 0, horiz = TRUE)

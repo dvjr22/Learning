@@ -1,7 +1,7 @@
 #Exercises Chapter 7
 
 #setwd("/home/diego/Learning/LearningR") #Laptop 
-#setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
+setwd("/home/valdeslab/Learning/LearningR") #GreenMachine
 rm(list = ls()) #clear environment
 
 #ex1
@@ -195,6 +195,7 @@ Owls$LogNestling =  log10(1 + Owls$SiblingNegotiation) #Add 1 to get rid of 0s t
 plot(Owls$LogNestling, Owls$ArrivalTime, 
      xlab = "Nestling", ylab = "Arrival Time")
 
+# TODO - Figure out the Smoothing portion of this question
 #New stuff
 OwlsM = Owls[Owls$SexParent == "Male", ] #Extract male data
 OwlsF = Owls[Owls$SexParent == "Female", ] #Extract female data
@@ -202,28 +203,34 @@ OwlsF = Owls[Owls$SexParent == "Female", ] #Extract female data
 OwlsM$NumSex = OwlsM[OwlsM$SexParent == "Males", ] = 1
 OwlsF$NumSex = OwlsF[OwlsF$SexParent == "Females", ] = 2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ex9
+#Make a pairplot for all the climatic variables in the vegetation data. Add
+#correlation coefficients in the lower panels. What does the graph tell you?
 
 Veg = read.table(file = "RBook/Vegetation2.txt", header = TRUE)
 names(Veg)
 str(Veg)
+col = c(9,10,11,12,13,22,23,24)
+pairs(Veg[, 9:13], diag.panel = panel.hist, upper.panel = panel.smooth, lower.panel = panel.cor)
+pairs(Veg[, 14:21], diag.panel = panel.hist, upper.panel = panel.smooth, lower.panel = panel.cor)
+pairs(Veg[, col], diag.panel = panel.hist, upper.panel = panel.smooth, lower.panel = panel.cor)
+
+#ex10
+#Plot species richness versus a covariate of your choice conditional on transect.
+
+Veg = read.table(file = "RBook/Vegetation2.txt", header = TRUE)
+names(Veg)
+str(Veg)
+
+unique(Veg$Transect)
+
+coplot(R ~ BARESOIL | as.factor(Transect), pch = 19, data = Veg)
+
+
+
+
+
+
 
 
 
