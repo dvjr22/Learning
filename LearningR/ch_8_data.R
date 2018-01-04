@@ -109,7 +109,7 @@ dotplot(factor(Month) ~ SAL | Station, pch = 16,
           panel.dotplot(x, y, cex = MyCex, col = MyCol, ...)
         })
 
-
+#8.6.3
 
 
 
