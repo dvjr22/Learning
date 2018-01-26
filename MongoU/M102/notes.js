@@ -156,3 +156,51 @@ t.update( { _id : myobj._id } , myobj ) // writes to db
 homework.b()
 
 db.products.find( { "limits.voice" : {$exists : true} }).count()
+
+//Week 3
+
+mongod --storageEngine mmapv1 //default
+mongod --storageEngine wiredTiger
+
+db.foo.createIndex( { a : 1 } ) // index on a, 1 denotes ascending
+db.foo.createIndex( { a : 1, b : 1 } )
+db.foo.find().sort( { a : 1, b: 1 } )
+db.foo.getIndexes()
+db.foo.dropIndex( { a : 1 } )
+
+db.places.createIndex( { loc : "2dsphere" } ) //index on lat lon on sphere ie: loc : [12.3, 34.5]
+db.sentences.createIndex( { words : "text" } ) //index on words, each word in attribute added to index
+db.sentences.find( { $text : { $search : "cat" } } ) //search on text index
+db.sentences.find( { 
+	$text : { $search : "Trees cat" } }, 
+	{ score : {$meta : "text Score"} , _id : 0} ) //rank results based on score
+
+exp = db.foo.explain("executionStats") //explain exectution
+exp.find()
+db.foo.dropIndex( { a : 1 } ) //drop index to compare stats results
+exp.find( { a : 1 }) //execution
+db.foo.createIndex( { a : 1 } ) //add index to compare 
+exp.find( { a : 1 }) //execution
+
+db.currentOp() //see current ops
+db.killOp(<opId>) //db.killOp(2530594)
+
+db.currentOp().inprog.forEach(
+	function(op) {
+		if(op.secs_running > 10) {
+			print("slow op in progress? secs: " + op.secs_running + " opid: " + op.opid);
+		}
+	}
+)
+
+//hw3
+db.sensor_readings.createIndex( { active : 1, tstamp : 1})
+db.sensor_readings.getIndexes()
+
+db.currentOp()
+db.killOp(931657)
+
+db.products.createIndex( { for : 1 } )
+db.products.find( { for : "ac3"}).count() //4
+exp = db.products.explain("executionStats")
+exp.find( { for : "ac3"}) //4
