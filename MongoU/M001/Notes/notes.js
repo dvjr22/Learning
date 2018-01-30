@@ -271,8 +271,8 @@ db.data.find({atmosphericPressureChange: {$exists: false}}).count()
 
 // docs with tomato meter > 95 or metacritic > 88
 // $or takes an array of selectors
-db.movieDetails.find({$or: [{"tomato.meter": {$gt: 95}},                               
-                            {"metacritic": {$gt: 88}}]},
+db.movieDetails.find({$or: [ {"tomato.meter": {$gt: 95} },                               
+                            {"metacritic": {$gt: 88} } ] },
                      {_id: 0, title: 1, "tomato.meter": 1, "metacritic": 1})
 
 // docs with tomato meter > 95 and metacritic > 88
