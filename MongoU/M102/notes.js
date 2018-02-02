@@ -204,3 +204,41 @@ db.products.createIndex( { for : 1 } )
 db.products.find( { for : "ac3"}).count() //4
 exp = db.products.explain("executionStats")
 exp.find( { for : "ac3"}) //4
+
+//Week 4
+
+// prepare replica set
+mongod --port 27001 --replSet repset --dbpath ~/Learning/MongoU/M102/Week_4/1 --logpath ~/Learning/MongoU/M102/Week_4/log.1 --logappend --oplogSize 50 --smallfiles --fork
+mongod --port 27002 --replSet repset --dbpath ~/Learning/MongoU/M102/Week_4/2 --logpath ~/Learning/MongoU/M102/Week_4/log.2 --logappend --oplogSize 50 --smallfiles --fork
+mongod --port 27003 --replSet repset --dbpath ~/Learning/MongoU/M102/Week_4/3 --logpath ~/Learning/MongoU/M102/Week_4/log.3 --logappend --oplogSize 50 --smallfiles --fork
+
+// initiate replica set
+cfg = { _id : "replSet", members : [ 
+	{_id: 0, host : "dna:27001"} , // machine name - use logical names - dns
+	{_id: 1, host : "dna:27002"} , // don't use ip addresses
+	{_id: 2, host : "dna:27003"} , // don't use names from /etc/hosts
+	]
+}
+
+rs.initiate(cfg)
+rs.status() // status of each member
+rs.conf() // show set configuration
+
+rs.slaveOk() // run on secondary to approve inconsistent reads
+
+//hw4
+mongod --dbpath /home/valdeslab/Learning/MongoU/M102/HW_4/1 --port 27001 --smallfiles --oplogSize 50
+
+mongo --port 27001 --shell replication.js
+
+mongod --replSet "hw4" --dbpath /home/valdeslab/Learning/MongoU/M102/HW_4/1 --port 27001 --smallfiles --oplogSize 50
+mongo --port 27001
+
+mongod --replSet "hw4" --dbpath /home/valdeslab/Learning/MongoU/M102/HW_4/2 --port 27004 --smallfiles --oplogSize 50
+mongod --replSet "hw4" --dbpath /home/valdeslab/Learning/MongoU/M102/HW_4/3 --port 27005 --smallfiles --oplogSize 50
+rs.add("dna:27004")
+rs.add("dna:27005")
+
+rs.stepDown() //from primary
+rs.remove("dna:27001")
+
