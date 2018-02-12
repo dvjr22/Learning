@@ -242,3 +242,25 @@ rs.add("dna:27005")
 rs.stepDown() //from primary
 rs.remove("dna:27001")
 
+//Week 5
+
+cfg = { _id : "replSet", 
+	members : [ 
+	{_id: 0, host : <name:port>, <options> } //options format
+	]
+}
+
+var cfg = rs.conf() //assign config to variable
+cfg.members[2].priority = 0 //reassign priority
+//cfg.members[2].slaveDelay = 120  //time in seconds
+rs.reconfig(cfg) //send reconfig to server
+
+
+for (var i = 0; i < arr.length; i ++) {
+	db.foo.insert(arr[i]);
+	if (i % 500 == 0 || i == arr.length - 1) { //check every 500th and last for majority insert
+		getLastError( { w: "majority" } )
+	} else {
+		getLastError( { w: 1 } ) //check if primary write
+	}
+} 
