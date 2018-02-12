@@ -182,6 +182,10 @@ exp.find( { a : 1 }) //execution
 db.foo.createIndex( { a : 1 } ) //add index to compare 
 exp.find( { a : 1 }) //execution
 
+db.students.createIndex({'scores.score' : 1}) //index in nested docs
+db.students.createIndex({ student_id : 1, class_id : 1 }, { unique : true }) // create unique index
+db.employees.createIndex( { cell : 1 }, {unique : true, sparse : true} )// account for attributes of null
+
 db.currentOp() //see current ops
 db.killOp(<opId>) //db.killOp(2530594)
 
