@@ -268,3 +268,322 @@ for (var i = 0; i < arr.length; i ++) {
 		getLastError( { w: 1 } ) //check if primary write
 	}
 } 
+
+//Week 6
+
+// aggregation pipeline reference page
+// https://docs.mongodb.com/manual/meta/aggregation-quick-reference/
+
+db.companies.aggregate([
+    { $match: { founded_year: 2004 } }, // same as find()
+    { $sort: { name: 1} }, // sort by name
+    { $limit: 5 }, // limit results to 5
+    { $project: {
+        _id: 0,
+        name: 1 } } // projection
+])
+
+// Take care with the order in which you specify sort skip and limit
+db.companies.aggregate([
+    { $match: { founded_year: 2004 } },
+    { $limit: 5 }, // limit results to 5
+    { $sort: { name: 1} }, // sort the 5 results
+    { $project: {
+        _id: 0,
+        name: 1 } }
+]) // returns different results than above query
+
+db.companies.aggregate([
+    { $match: { founded_year: 2004 } },
+    { $sort: { name: 1} },
+    { $skip: 10 }, // skip first 10 results
+    { $limit: 5 },
+    { $project: {
+        _id: 0,
+        name: 1 } },
+])
+
+db.companies.aggregate([
+    // funding_rounds : array of documents 
+    // investments : array of documents
+    // financial_org : doc
+    // permalink : attribute
+    { $match: {"funding_rounds.investments.financial_org.permalink": "greylock" } }, // match an element within array
+    { $project: {
+        _id: 0, 
+        name: 1,
+        ipo: "$ipo.pub_year", // make top level values in doc query produces
+        valuation: "$ipo.valuation_amount", // $ - assign value of key to field
+        funders: "$funding_rounds.investments.financial_org.permalink"
+    } }
+]).pretty()
+
+db.companies.aggregate([
+    { $match: {"funding_rounds.investments.financial_org.permalink": "greylock" } },
+    { $project: {
+        _id: 0, 
+        name: 1,
+        founded: { // construct new nested document
+            year: "$founded_year",
+            month: "$founded_month",
+            day: "$founded_day"
+        }
+    } }
+]).pretty()
+
+// unwind example
+db.companies.aggregate([
+    { $match: {"funding_rounds.investments.financial_org.permalink": "greylock" } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        amount: "$funding_rounds.raised_amount", // array
+        year: "$funding_rounds.funded_year" // array
+    } }
+])
+
+db.companies.aggregate([
+    { $match: {"funding_rounds.investments.financial_org.permalink": "greylock" } },
+    { $unwind: "$funding_rounds" }, // turns array of muliple fields to a document for each match
+    { $project: {
+        _id: 0,
+        name: 1,
+        amount: "$funding_rounds.raised_amount", // document with one of the array values
+        year: "$funding_rounds.funded_year" // document with one of the array values
+    } }
+])
+
+// See unwindExamples.js for more unwind examples
+
+// array filters
+
+db.companies.aggregate([
+    { $match: {"funding_rounds.investments.financial_org.permalink": "greylock" } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        founded_year: 1,
+        rounds: { $filter: {
+            input: "$funding_rounds", // the array
+            as: "round", // name used for array
+            // $$ - reference variable established in expression
+            cond: { $gte: ["$$round.raised_amount", 100000000] } } } // criteria to filter array
+    } },
+    { $match: {"rounds.investments.financial_org.permalink": "greylock" } },    
+]).pretty()
+
+db.companies.aggregate([
+    { $match: { "founded_year": 2010 } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        founded_year: 1,
+        first_round: { $arrayElemAt: [ "$funding_rounds", 0 ] }, // 1st array element
+        last_round: { $arrayElemAt: [ "$funding_rounds", -1 ] } // last array element
+    } }
+]).pretty()
+
+db.companies.aggregate([
+    { $match: { "founded_year": 2010 } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        founded_year: 1,
+        first_round: { $slice: [ "$funding_rounds", 1 ] }, // take 1 element starting at 1st element
+        last_round: { $slice: [ "$funding_rounds", -1 ] } // take 1 element starting from last
+    } }
+]).pretty()
+
+db.companies.aggregate([
+    { $match: { "founded_year": 2010 } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        founded_year: 1,
+        early_rounds: { $slice: [ "$funding_rounds", 1, 3 ] } // take 3 elements starting at index 1
+    } }
+]).pretty()
+
+db.companies.aggregate([
+    { $match: { "founded_year": 2004 } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        founded_year: 1,
+        total_rounds: { $size: "$funding_rounds" } // the size of the array 
+    } }
+]).pretty()
+
+// accumulators
+
+db.companies.aggregate([
+    { $match: { "funding_rounds": { $exists: true, $ne: [ ]} } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        largest_round: { $max: "$funding_rounds.raised_amount" } // gets max value within array
+    } }
+])
+
+db.companies.aggregate([
+    { $match: { "funding_rounds": { $exists: true, $ne: [ ]} } },
+    { $project: {
+        _id: 0,
+        name: 1,
+        total_funding: { $sum: "$funding_rounds.raised_amount" } // sum the values of an array
+    } }
+])
+
+db.companies.aggregate([
+    { $group: {
+        _id: { founded_year: "$founded_year" },
+        average_number_of_employees: { $avg: "$number_of_employees" }  // average of an array
+    } },
+    { $sort: { average_number_of_employees: -1 } }
+    
+])
+
+// group
+
+db.companies.aggregate([
+    { $group: {
+        _id: { founded_year: "$founded_year" }, // define how documents will be grouped
+        average_number_of_employees: { $avg: "$number_of_employees" } // average of all employees in the founded year
+    } },
+    { $sort: { average_number_of_employees: -1 } } // sort in reverse order
+    
+])
+
+// _id best practice
+// more examples in idinGroupExamples.js
+db.companies.aggregate([
+    { $match: { founded_year: { $gte: 2010 } } },
+    { $group: {
+        _id: { founded_year: "$founded_year"}, // do this...
+        //_id: "$founded_year", // ...don't do this
+        companies: { $push: "$name" } // adds value to running array
+    } },
+    { $sort: { "_id.founded_year": 1 } }
+]).pretty()
+
+
+// group vs project
+
+// Put it all together
+db.companies.aggregate( [
+    { $match: { "relationships.person": { $ne: null } } },  // ensure not null
+    { $project: { relationships: 1, _id: 0 } }, // project relationships
+    { $unwind: "$relationships" }, // every relationship comes in as a seperate document
+    { $group: {
+        _id: "$relationships.person", // group by person
+        count: { $sum: 1 } // add all relationships
+    } },
+    { $sort: { count: -1 } } // sort in decending order
+] )
+
+db.companies.aggregate([
+    { $match: { funding_rounds: { $ne: null } } },
+    { $unwind: "$funding_rounds" },
+    { $sort: { "funding_rounds.funded_year": 1,
+               "funding_rounds.funded_month": 1,
+               "funding_rounds.funded_day": 1 } },
+    { $group: {
+        _id: { company: "$name" },
+        funding: {
+            $push: { // $push only available in group stage
+                amount: "$funding_rounds.raised_amount",
+                year: "$funding_rounds.funded_year" 
+            } }
+    } },
+] ).pretty()
+
+
+db.companies.aggregate([
+    { $match: { funding_rounds: { $exists: true, $ne: null } } },
+    { $unwind: "$funding_rounds" },
+    { $sort: { "funding_rounds.funded_year": 1,
+               "funding_rounds.funded_month": 1,
+               "funding_rounds.funded_day": 1 } },
+    { $group: {
+        _id: { company: "$name" },
+        first_round: { $first: "$funding_rounds" }, 
+        last_round: { $last: "$funding_rounds" },
+        num_rounds: { $sum: 1 },
+        total_raised: { $sum: "$funding_rounds.raised_amount" }
+    } },
+    { $project: {
+        _id: 0,
+        company: "$_id.company",
+        first_round: {
+            amount: "$first_round.raised_amount",
+            article: "$first_round.source_url",
+            year: "$first_round.funded_year"
+        },
+        last_round: {
+            amount: "$last_round.raised_amount",
+            article: "$last_round.source_url",
+            year: "$last_round.funded_year"
+        },
+        num_rounds: 1,
+        total_raised: 1,
+    } },
+    { $sort: { total_raised: -1 } }
+] ).pretty()
+
+//hw6
+db.companies.aggregate( [
+    { $match: { "relationships.person": { $ne: null } } },  // ensure not null
+    { $project: { relationships: 1, _id: 0, name: 1 } }, // project relationships and company name
+    { $unwind: "$relationships" }, // every relationship comes in as a seperate document
+    { $group: {
+        _id: { person: "$relationships.person" }, // group by person
+        name : {  $addToSet : "$name" } // Add company to array, only unique instances will be added
+    } },
+    { $project : { name: "$relationships.person", // project name
+    	count: { $size: "$name"} } }, // size of the array
+    { $sort: { count: -1 } } // sort in decending order
+] ).pretty()
+
+db.companies.aggregate([
+    { $group: {
+        _id: { founded_year: "$founded_year" }, // define how documents will be grouped
+        average_number_of_employees: { $avg: "$number_of_employees" } // average of all employees in the founded year
+    } },
+    { $sort: { average_number_of_employees: -1 } } // sort in reverse order
+    
+])
+
+
+db.grades.aggregate([
+	{ $match: { "scores.type" : { $ne: 'quiz' } } },
+	{ $project : { _id: 0, scores: 1}}
+])
+
+db.grades.aggregate([
+	{ $group : {
+		_id : { class : "$class_id", score: "$scores.type" },
+		exam_avg : { $avg: "$score"}
+
+	} },
+	{ $sort: {_id : 1} }
+]).pretty()
+
+
+db.companies.aggregate([
+    {	$match: { "founded_year" : 2004 }},
+    {
+      $project: { 
+          _id : 0, 
+          name : 1, 
+          founded_year : 1, 
+          funding_rounds : 1,
+          total_rounds : {
+              "$size" : "$funding_rounds"
+          }
+      }
+    },
+    {   $match: { total_rounds : { "$gte" : 5 } } },
+    {   $unwind: "$funding_rounds" },
+    {   $group: { _id : "$name", average : { $avg: "$funding_rounds.raised_amount" } } },
+    {   $sort: { "average" : 1 } }
+]);
